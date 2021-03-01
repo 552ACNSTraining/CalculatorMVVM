@@ -10,9 +10,13 @@ namespace CalculatorMVVM.ViewModels
         public string Num1
         {
             get => _Num1;
-            set {
+            set
+            {
                 SetProperty(ref _Num1, value);
                 AddCommand.RaiseCanExecuteChanged();
+                SubCommand.RaiseCanExecuteChanged();
+                MultiCommand.RaiseCanExecuteChanged();
+                DivideCommand.RaiseCanExecuteChanged();
             }
         }
 
@@ -25,6 +29,9 @@ namespace CalculatorMVVM.ViewModels
             {
                 SetProperty(ref _Num2, value);
                 AddCommand.RaiseCanExecuteChanged();
+                SubCommand.RaiseCanExecuteChanged();
+                MultiCommand.RaiseCanExecuteChanged();
+                DivideCommand.RaiseCanExecuteChanged();
             }
         }
 
@@ -33,7 +40,7 @@ namespace CalculatorMVVM.ViewModels
         {
             get => _Result;
             set => SetProperty(ref _Result, value);
-            
+
         }
 
         public DelegateCommand AddCommand { get; }
@@ -41,9 +48,14 @@ namespace CalculatorMVVM.ViewModels
         public DelegateCommand MultiCommand { get; }
         public DelegateCommand DivideCommand { get; }
 
+
         public MainWindowViewModel()
         {
             AddCommand = new DelegateCommand(Add, CanCalculate);
+            SubCommand = new DelegateCommand(Sub, CanCalculate);
+            MultiCommand = new DelegateCommand(Multi, CanCalculate);
+            DivideCommand = new DelegateCommand(Divide, CanDivide);
+
         }
 
         private void Add()
@@ -53,14 +65,17 @@ namespace CalculatorMVVM.ViewModels
 
         private void Sub()
         {
+            Result = (_dblNum1 - _dblNum2).ToString();
         }
 
         private void Multi()
         {
+            Result = (_dblNum1 * _dblNum2).ToString();
         }
 
         private void Divide()
         {
+            Result = (_dblNum1 / _dblNum2).ToString();
         }
 
         public bool CanCalculate()
@@ -77,7 +92,16 @@ namespace CalculatorMVVM.ViewModels
 
         public bool CanDivide()
         {
-            return default;
+            CanCalculate();
+            bool divideBy0 = _dblNum2 == 0;
+
+            if (divideBy0)
+            {
+                Result = "Error";
+            }
+
+            return !divideBy0;
+
         }
     }
 }
